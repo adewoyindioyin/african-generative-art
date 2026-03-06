@@ -1,0 +1,12 @@
+# VS Code
+.vscode/
+
+# Node / npm (if ever added)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# p5.js library files (large binaries, load from CDN instead)
+libraries/
