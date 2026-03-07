@@ -59,6 +59,21 @@ const STRIP_PALETTES = [
 let NUM_STRIPS = 6; // number of vertical strips
 let NUM_CELLS  = 8; // number of pattern units per strip (vertically)
 
+// ---------------------------------------------------------------
+// SECTION 3: SEED — the key to controlled generativity
+//
+// A seed is a number that controls ALL randomness in the sketch.
+// Same seed → exact same artwork, every time.
+// Different seed → completely different artwork.
+//
+// This is how serious generative artists work:
+//   - They find a seed they love and SAVE it (that's an edition)
+//   - They mint or print that specific seed
+//   - Collectors know the seed is the artwork's DNA
+// ---------------------------------------------------------------
+
+let currentSeed;
+
 
 // ================================================================
 // SETUP — runs once at the start
@@ -66,7 +81,8 @@ let NUM_CELLS  = 8; // number of pattern units per strip (vertically)
 
 function setup() {
   createCanvas(800, 800);
-  noLoop(); // draw once and stop — this is how you make static art
+  currentSeed = floor(random(99999)); // pick a random starting seed
+  noLoop();
 }
 
 
@@ -75,8 +91,26 @@ function setup() {
 // ================================================================
 
 function draw() {
+  // Lock ALL p5.js randomness to our seed.
+  // Every random() call below gives the same result for the same seed.
+  randomSeed(currentSeed);
+
+  // Composition values are now GENERATED, not hardcoded
+  NUM_STRIPS = floor(random(5, 14));  // seed controls how many strips
+  NUM_CELLS  = floor(random(6, 18));  // seed controls how many rows
+
   background(KENTE_BLACK);
   drawKente();
+  showSeed();
+}
+
+function showSeed() {
+  // Displays the seed so you can note down compositions you love
+  fill(255, 255, 255, 140);
+  noStroke();
+  textSize(11);
+  textAlign(LEFT, BOTTOM);
+  text('seed: ' + currentSeed, 8, height - 6);
 }
 
 
@@ -95,9 +129,9 @@ function drawKente() {
   for (let s = 0; s < NUM_STRIPS; s++) {
     let x = margin + s * sW;
 
-    // Each strip gets its own color pair and motif type
-    let [c1, c2] = STRIP_PALETTES[s % STRIP_PALETTES.length];
-    let motif = s % 4; // cycles through 4 motif types (0, 1, 2, 3)
+    // Each strip gets its own color pair and motif type — both driven by seed
+    let [c1, c2] = STRIP_PALETTES[floor(random(STRIP_PALETTES.length))];
+    let motif = floor(random(5)); // 0-4: random motif per strip per seed
 
     // --- DRAW ALL CELLS WITHIN THIS STRIP ---
     for (let c = 0; c < NUM_CELLS; c++) {
@@ -206,6 +240,24 @@ function drawCell(w, h, motif, c1, c2, cellIndex) {
       fill(b % 2 === 0 ? c1 : c2);
       rect(0, b * bH, w, bH);
     }
+
+  } else if (motif === 4) {
+    // ---- DIAMOND ----
+    // A centred diamond (rotated square) — appears in many West African textiles.
+    // vertex() lets you draw any polygon point by point.
+
+    fill(alt ? c1 : c2);   // background
+    rect(0, 0, w, h);
+
+    fill(alt ? c2 : c1);   // diamond
+    let cx = w / 2, cy = h / 2;
+    let s = min(w, h) * 0.42;
+    beginShape();
+      vertex(cx,     cy - s); // top
+      vertex(cx + s, cy);     // right
+      vertex(cx,     cy + s); // bottom
+      vertex(cx - s, cy);     // left
+    endShape(CLOSE);
   }
 }
 
@@ -215,14 +267,18 @@ function drawCell(w, h, motif, c1, c2, cellIndex) {
 // ================================================================
 
 function keyPressed() {
-  // S — save the canvas as a PNG file (this is how you export for printing)
+  // S — save PNG with the seed baked into the filename
+  // This means you can always recreate this exact piece later
   if (key === 's' || key === 'S') {
-    saveCanvas('kente_art_day1', 'png');
+    saveCanvas('kente_seed' + currentSeed, 'png');
   }
 
-  // R — regenerate (redraw). Right now nothing is random,
-  // so it looks the same. Tomorrow we add controlled randomness.
+  // R — new seed → completely new composition
   if (key === 'r' || key === 'R') {
+    currentSeed = floor(random(99999));
     redraw();
   }
+
+  // L — lock to a specific seed you type in the console
+  // Usage: open browser DevTools (F12), type: currentSeed = 12345; redraw()
 }
