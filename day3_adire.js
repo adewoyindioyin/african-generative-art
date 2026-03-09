@@ -54,15 +54,15 @@
 // ---------------------------------------------------------------
 
 let t = 0;           // time — increases each frame, drives the animation
-let speed = 0.004;   // how fast the cloth pattern evolves
+let speed = 0.04;   // how fast the cloth pattern evolves
                      // try: 0.001 (glacial), 0.010 (fast), 0.030 (chaotic)
-let noiseScale = 0.009; // controls zoom level of the noise
+let noiseScale = 0.0099;// controls zoom level of the noise
                         // smaller = bigger blobs (zoomed in on the noise landscape)
                         // larger  = finer detail (zoomed out)
 let paused = false;
 let currentNoiseSeed;
 
-const CELL = 8; // pixel size of each noise cell
+const CELL = 5; // pixel size of each noise cell
                 // smaller (try 3) = more detail, slower performance
                 // larger  (try 24) = chunky geometric look
 
@@ -157,6 +157,16 @@ function drawAdire() {
       }
 
       rect(x, y, CELL, CELL);
+    }
+  }
+
+for (let x = 0; x < width; x += CELL * 2) {
+    for (let y = 0; y < height; y += CELL * 2) {
+       let n2 = noise(x * noiseScale * 2.7, y * noiseScale * 2.7, t * 0.5);
+      if (n2 > style.threshold + 0.15) {
+         fill(style.resist + '75'); // semi-transparent
+        rect(x, y, CELL * 2, CELL * 2);
+      }
     }
   }
 
