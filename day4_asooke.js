@@ -174,7 +174,18 @@ class Particle {
     c.setAlpha(alpha);
     noStroke();
     fill(c);
-    ellipse(this.x, this.y, this.size, this.size);
+
+    let d = dist(this.x, this.y, mouseX, mouseY);
+let s = map(d, 0, 200, this.size * 6, this.size);
+s = max(s, this.size); 
+stroke(c);
+strokeWeight(this.size);
+noFill();
+line(this.x, this.y,
+     this.x - this.vx * 4,
+     this.y - this.vy * 4);
+noStroke();
+  //ellipse(this.x, this.y, this.size, this.size);
   }
 
   // isDead() returns true when this particle has used up its life
@@ -211,7 +222,7 @@ function draw() {
   //   40 → short sharp trails
   //   255 → no trails at all (fully clears each frame)
   let bg = PALETTES[paletteIdx].bg;
-  fill(bg[0], bg[1], bg[2], 18);
+  fill(bg[0], bg[1], bg[2], 255);
   noStroke();
   rect(0, 0, width, height);
 
