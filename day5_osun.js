@@ -107,9 +107,9 @@ let paletteIdx = 0;
 
 // k controls petal count in r = cos(k * θ)
 // Try: 2, 3, 4, 5, 7, 0.5, 1.5, 2/3, 3/5 — each is unique
-let k = 5;
+let k = 10;
 
-let layers     = 7;      // how many overlapping petals drawn
+let layers     = 10;     // how many overlapping petals drawn
 let resolution = 800;    // how many points per curve (smoothness)
                          // 200 = slightly angular, 1200 = perfectly smooth
 let baseRadius = 300;    // outer radius of the form
@@ -117,7 +117,7 @@ let rotSpeed   = 0.003;  // how fast the whole form rotates
 let paused     = false;
 
 // Additional per-render parameters (randomised with R)
-let layerAngleOffset = TWO_PI / 12;  // angle gap between each layer
+let layerAngleOffset = Math.PI * 2 /100; // angle gap between each layer
 let layerScaleFactor = 0.93;         // each layer is this × smaller
 
 // ---------------------------------------------------------------
@@ -136,14 +136,19 @@ function setup() {
 function draw() {
   background(PALETTES[paletteIdx].bg);
 
-  // Move origin to canvas centre — all our maths works from (0,0)
-  translate(width / 2, height / 2);
+  // push/pop ensures translate resets each frame — without it,
+  // translate() accumulates and everything shifts off-screen.
+  push();
+    translate(width / 2, height / 2); // work from canvas centre
 
-  let baseAngle = paused ? 0 : frameCount * rotSpeed;
+    let baseAngle = paused ? 0 : frameCount * rotSpeed;
 
-  drawSacredForm(0, 0, baseAngle);
-  drawCentreOrb();
-  showHUD();
+    drawSacredForm(0, 0, baseAngle);
+    drawSpiral(6, PALETTES[paletteIdx].strokes[1]);
+    drawCentreOrb();
+  pop();
+
+  showHUD(); // drawn AFTER pop() so it uses normal screen coordinates
 }
 
 // ================================================================
@@ -166,6 +171,26 @@ function drawSacredForm(cx, cy, baseAngle) {
 
     drawRoseCurve(cx, cy, radius, angle, col, alpha);
   }
+}
+
+// ================================================================
+// THE SPIRAL FORM
+// ================================================================
+
+function drawSpiral(turns, col) {
+  let c = color(col);
+  c.setAlpha(60);
+  stroke(c);
+  strokeWeight(0.8);
+  noFill();
+  beginShape();
+  let steps = 600;
+  for (let i = 0; i < steps; i++) {
+    let theta = map(i, 0, steps, 0, TWO_PI * turns);
+    let r = map(i, 0, steps, 0, baseRadius);
+    vertex(r * cos(theta), r * sin(theta));
+  }
+  endShape();
 }
 
 // ================================================================
@@ -199,6 +224,10 @@ function drawRoseCurve(cx, cy, radius, rotation, col, alpha) {
   push();
     translate(cx, cy);
     rotate(rotation);      // each layer has its own rotation offset
+
+    let f = color(col);
+f.setAlpha(alpha * 0.15);
+fill(f);
 
     beginShape();
     for (let theta = 0; theta <= totalAngle; theta += step) {
@@ -250,14 +279,14 @@ function showHUD() {
     '  layers=' + layers +
     '  palette: ' + PALETTES[paletteIdx].name +
     '   |   SPACE=pause  R=random  S=save  1-5=palette  ←→=petals  ↑↓=speed',
-    -width / 2 + 10,
-    height / 2 - 10
+    10,
+    height - 10
   );
   if (paused) {
     fill(255, 255, 255, 120);
     textAlign(CENTER, TOP);
     textSize(13);
-    text('— PAUSED —', 0, -height / 2 + 14);
+    text('— PAUSED —', width / 2, 14);
     textAlign(LEFT, BOTTOM);
   }
 }
