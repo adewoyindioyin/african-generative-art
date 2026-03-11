@@ -184,7 +184,7 @@ noFill();
 line(this.x, this.y,
      this.x - this.vx * 4,
      this.y - this.vy * 4);
-noStroke();
+noStroke(); 
   //ellipse(this.x, this.y, this.size, this.size);
   }
 
@@ -202,7 +202,7 @@ noStroke();
 // ---------------------------------------------------------------
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(1080, 1080);
   noiseSeed(currentSeed);
   spawnParticles(targetCount);
   frameRate(60);
@@ -222,7 +222,7 @@ function draw() {
   //   40 → short sharp trails
   //   255 → no trails at all (fully clears each frame)
   let bg = PALETTES[paletteIdx].bg;
-  fill(bg[0], bg[1], bg[2], 255);
+  fill(bg[0], bg[1], bg[2], 40);
   noStroke();
   rect(0, 0, width, height);
 

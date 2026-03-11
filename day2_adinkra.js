@@ -2,9 +2,9 @@
 // DAY 2: ADINKRA SYMBOL FIELD
 // ================================================================
 // CONTROLS:
-//   R = new seed → new layout
-//   S = save PNG (filename includes seed)
-//   1-5 = switch between colour palettes instantly
+//   R     = new seed → new layout
+//   S     = save PRINT-READY PNG (2400×2400px, 300 DPI @ 8×8in)
+//   1-6   = switch between colour palettes instantly
 // ================================================================
 //
 // WHAT YOU LEARN TODAY:
@@ -24,24 +24,27 @@
 // ================================================================
 
 // ---------------------------------------------------------------
-// PALETTES — 5 moods, switchable with keys 1-5
+// PALETTES — 6 moods, switchable with keys 1-6
 // ---------------------------------------------------------------
 
 const PALETTES = [
   // 0 — Classic: black ink on aged parchment (authentic adinkra)
   { bg: '#E8D5A3', ink: '#1A1008', accent: '#8B4513', name: 'Classic' },
   // 1 — Kente: gold symbols on deep black
-  { bg: '#111111', ink: '#F5A204', accent: '#C0392B', name: 'Kente Night' },
+  { bg: '#111111', ink: '#F5A204', accent: '#00A86B', name: 'Kente Night' },
   // 2 — Earth: mudcloth palette
   { bg: '#C19A6B', ink: '#2C1810', accent: '#8B0000', name: 'Mudcloth' },
   // 3 — Indigo: West African resist-dye cloth
   { bg: '#1B2A4A', ink: '#E8D5A3', accent: '#7EB8D4', name: 'Indigo' },
   // 4 — Contemporary: bold modern presentation
   { bg: '#F5F0DC', ink: '#1B6B3A', accent: '#F5A204', name: 'Contemporary' },
+  // 5 — Bonus palette: vibrant and playful
+  { bg: '#000000', ink: '#FCA311', accent: '#E5E5E5', name: 'Black & Gold Elegance' },
 ];
 
 let palette;
 let currentSeed;
+let printScale = 3;   // S key renders at 3× = 2400×2400px (300 DPI @ 8×8in)
 
 // ---------------------------------------------------------------
 // SETUP
@@ -78,7 +81,7 @@ function draw() {
 
 function drawTexture() {
   // Scattered fine grain
-  for (let i = 0; i < 12000; i++) {
+  for (let i = 0; i < 20; i++) {
     let x = random(width);
     let y = random(height);
     // random() here is seeded — same seed = same grain pattern
@@ -97,7 +100,7 @@ function drawTexture() {
 
 function drawSymbolField() {
   let margin = 50;
-  let cols = floor(random(3, 7));  // seed controls grid density
+  let cols = floor(random(3, 8));  // seed controls grid density
   let rows = cols;                  // square grid always looks best
 
   let cellW = (width  - margin * 2) / cols;
@@ -112,6 +115,7 @@ function drawSymbolField() {
     drawSankofa,
     drawNyameDua,
     drawFawohodie,
+    drawOware,
   ];
 
   for (let row = 0; row < rows; row++) {
@@ -120,7 +124,7 @@ function drawSymbolField() {
       let cy = margin + row * cellH + cellH / 2;
 
       let fn       = random(symbolFns);              // seed picks the symbol
-      let rotation = floor(random(4)) * 90;          // 0, 90, 180, or 270 degrees
+      let rotation = random(360);      // 0, 90, 180, or 270 degrees
 
       // THE HOLY TRINITY — now with rotation added
       push();
@@ -342,6 +346,21 @@ function drawFawohodie(s, ink, accent) {
 }
 
 // ================================================================
+function drawOware(s, ink, accent) {
+  let r = s * 0.28; // radius of the main circle 
+
+  stroke(ink);
+  strokeWeight(s * 0.06);
+  noFill();
+  circle(-r * 0.5, 0, r * 2);   // left circle
+  circle( r * 0.5, 0, r * 2);   // right circle
+
+  fill(accent);
+  noStroke();
+  circle(0, 0, r * 0.3); // center dot where they overlap
+}
+
+// ================================================================
 // LAYER 3: BORDER
 // ================================================================
 
@@ -349,7 +368,7 @@ function drawBorder() {
   let m = 18;
   noFill();
   stroke(palette.ink);
-  strokeWeight(3);
+  strokeWeight(5);
   rect(m, m, width - m * 2, height - m * 2);
   strokeWeight(1);
   rect(m + 6, m + 6, width - (m + 6) * 2, height - (m + 6) * 2);
@@ -364,7 +383,7 @@ function showInfo() {
   noStroke();
   textSize(11);
   textAlign(LEFT, BOTTOM);
-  text('seed: ' + currentSeed + '  |  palette: ' + palette.name + '  |  R=new  S=save  1-5=palette', 26, height - 24);
+  text('seed: ' + currentSeed + '  |  palette: ' + palette.name + '  |  R=new  S=print-save  1-6=palette', 26, height - 24);
 }
 
 // ================================================================
@@ -376,13 +395,22 @@ function keyPressed() {
     currentSeed = floor(random(99999));
     redraw();
   }
+
+  // PRINT SAVE — temporarily resize to 2400×2400, render, save, restore
   if (key === 's' || key === 'S') {
-    saveCanvas('adinkra_' + palette.name + '_seed' + currentSeed, 'png');
+    let printSize = 800 * printScale;
+    resizeCanvas(printSize, printSize);
+    redraw();
+    saveCanvas('adinkra_' + palette.name.replace(/\s/g, '_') + '_seed' + currentSeed, 'png');
+    resizeCanvas(800, 800);
+    redraw();
   }
+
   // Switch palettes with number keys
   if (key === '1') { palette = PALETTES[0]; redraw(); }
   if (key === '2') { palette = PALETTES[1]; redraw(); }
   if (key === '3') { palette = PALETTES[2]; redraw(); }
   if (key === '4') { palette = PALETTES[3]; redraw(); }
   if (key === '5') { palette = PALETTES[4]; redraw(); }
+  if (key === '6') { palette = PALETTES[5]; redraw(); }
 }
