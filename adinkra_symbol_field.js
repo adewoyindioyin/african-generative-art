@@ -51,8 +51,8 @@ let printScale = 3;   // S key renders at 3× = 2400×2400px (300 DPI @ 8×8in)
 // ---------------------------------------------------------------
 
 function setup() {
-  createCanvas(800, 800);
-  palette = PALETTES[0];
+  createCanvas(windowWidth, windowHeight);
+  palette = PALETTES[2];
   currentSeed = floor(random(99999));
   noLoop();
 }
@@ -81,7 +81,7 @@ function draw() {
 
 function drawTexture() {
   // Scattered fine grain
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     let x = random(width);
     let y = random(height);
     // random() here is seeded — same seed = same grain pattern
@@ -100,7 +100,7 @@ function drawTexture() {
 
 function drawSymbolField() {
   let margin = 50;
-  let cols = floor(random(3, 8));  // seed controls grid density
+  let cols = floor(random(1, 3));  // seed controls grid density
   let rows = cols;                  // square grid always looks best
 
   let cellW = (width  - margin * 2) / cols;
@@ -134,10 +134,10 @@ function drawSymbolField() {
       pop();
 
       // Optional: thin cell separator lines
-      noFill();
-      stroke(palette.ink + '22'); // hex colour + 2-digit alpha = semi-transparent
-      strokeWeight(0.5);
-      rect(-cellW / 2, -cellH / 2, cellW, cellH);
+      //noFill();
+      //stroke(palette.ink + '22'); // hex colour + 2-digit alpha = semi-transparent
+      //strokeWeight(0.5);
+      //rect(-cellW / 2, -cellH / 2, cellW, cellH);
     }
   }
 }
@@ -402,7 +402,7 @@ function keyPressed() {
     resizeCanvas(printSize, printSize);
     redraw();
     saveCanvas('adinkra_' + palette.name.replace(/\s/g, '_') + '_seed' + currentSeed, 'png');
-    resizeCanvas(800, 800);
+    resizeCanvas(windowWidth, windowHeight);
     redraw();
   }
 

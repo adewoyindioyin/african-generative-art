@@ -56,8 +56,8 @@ const STRIP_PALETTES = [
 // Try: NUM_STRIPS = 14, NUM_CELLS = 16 → intricate and dense
 // ---------------------------------------------------------------
 
-let NUM_STRIPS = 6; // number of vertical strips
-let NUM_CELLS  = 8; // number of pattern units per strip (vertically)
+let NUM_STRIPS = 10; // number of vertical strips
+let NUM_CELLS  = 30; // number of pattern units per strip (vertically)
 
 // ---------------------------------------------------------------
 // SECTION 3: SEED — the key to controlled generativity
@@ -81,7 +81,7 @@ let currentSeed;
 
 function setup() {
   createCanvas(800, 800);
-  currentSeed = floor(random(99999)); // pick a random starting seed
+  currentSeed = floor(random(1000)); // pick a random starting seed
   noLoop();
 }
 
@@ -96,8 +96,8 @@ function draw() {
   randomSeed(currentSeed);
 
   // Composition values are now GENERATED, not hardcoded
-  NUM_STRIPS = floor(random(5, 14));  // seed controls how many strips
-  NUM_CELLS  = floor(random(6, 18));  // seed controls how many rows
+  NUM_STRIPS = floor(random(2, 5));  // seed controls how many strips
+  NUM_CELLS  = floor(random(4, 5));  // seed controls how many rows
 
   background(KENTE_BLACK);
   drawKente();
@@ -108,9 +108,9 @@ function showSeed() {
   // Displays the seed so you can note down compositions you love
   fill(255, 255, 255, 140);
   noStroke();
-  textSize(11);
+  textSize(13);
   textAlign(LEFT, BOTTOM);
-  text('seed: ' + currentSeed, 8, height - 6);
+  text('seed: ' + currentSeed, 21, height - 5);
 }
 
 
@@ -119,7 +119,7 @@ function showSeed() {
 // ================================================================
 
 function drawKente() {
-  let margin = 30;
+  let margin = 40;
   let totalW  = width  - margin * 2;
   let totalH  = height - margin * 2;
   let sW = totalW / NUM_STRIPS; // width of each strip
@@ -157,7 +157,7 @@ function drawKente() {
   // --- DECORATIVE DIVIDER LINES ---
   // Thin gold lines between strips simulate the seams of real kente weaving
   stroke(KENTE_GOLD);
-  strokeWeight(0.02);
+  strokeWeight(1);
   for (let s = 1; s < NUM_STRIPS; s++) {
     let x = margin + s * sW;
     line(x, margin, x, height - margin);
@@ -166,7 +166,7 @@ function drawKente() {
   // --- OUTER FRAME (double-line border typical in kente presentation) ---
   noFill();
   stroke(KENTE_GOLD);
-  strokeWeight(4);
+  strokeWeight(10);
   rect(margin - 1, margin - 1, totalW + 2, totalH + 2);
   strokeWeight(1);
   rect(margin - 8, margin - 8, totalW + 16, totalH + 16);

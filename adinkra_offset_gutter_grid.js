@@ -1,7 +1,7 @@
 // ================================================================
 // DAY 2B: ADINKRA SYMBOL FIELD — OFFSET + GUTTER GRID
 // ================================================================
-// Same symbols as day2_adinkra.js, but uses the inspo.js grid:
+// Same symbols as adinkra_symbol_field.js, but uses the inspo.js grid:
 //   • offset  — wide proportional outer margin
 //   • gutter  — inner spacing between every cell
 //   • tinted cell backgrounds — make the grid structure visible
@@ -40,7 +40,7 @@ let printScale2b = 3; // S key renders at 3× = 2400×2400px
 // ---------------------------------------------------------------
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(windowWidth, windowHeight);
   palette2b = PALETTES_2B[0];
   currentSeed2b = floor(random(99999));
   noLoop();
@@ -131,7 +131,7 @@ function drawSymbolField2b() {
 
 // ================================================================
 // THE SYMBOLS
-// (renamed with 2b suffix so this file can coexist with day2_adinkra.js
+// (renamed with 2b suffix so this file can coexist with adinkra_symbol_field.js
 //  if both are loaded in index.html at the same time)
 // ================================================================
 

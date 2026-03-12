@@ -90,7 +90,7 @@ let styleIdx = 0;
 // ---------------------------------------------------------------
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(windowWidth, windowHeight);
   noStroke();
   currentNoiseSeed = 42;  // first load always looks good
   noiseSeed(currentNoiseSeed);

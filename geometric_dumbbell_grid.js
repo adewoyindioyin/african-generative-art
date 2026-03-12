@@ -73,9 +73,9 @@ let isAnimating = true;
 let pane;
 
 function setup() {
-  createCanvas(1080, 1080);
+  createCanvas(windowWidth, windowHeight);
   P5Capture.setDefaultOptions({
-    format: 'webm',
+    format: 'mp4',
     quality: 1,
     framerate: 60,
   });
